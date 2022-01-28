@@ -43,10 +43,11 @@ def authorize():
 def index():
     if request.method == 'POST':
         term = request.form.get('term')
+        amount = request.form.get('amount')
         if request.form.get('get_top_tracks') == 'Top Tracks':
-            return redirect(url_for('top_tracks', term=term))
+            return redirect(url_for('top_tracks', term=term, amount=amount))
         elif request.form.get('get_top_artists') == 'Top Artists':
-            return redirect(url_for('top_artists', term=term))
+            return redirect(url_for('top_artists', term=term, amount=amount))
     else:
         return render_template('/index.html')
 
@@ -67,12 +68,13 @@ def top_tracks():
 
         # We are getting the top tracks of the user according to their input.
         time_range = request.args.get('term')
+        amount_of_items = int(request.args.get('amount'))
         sp = spotipy.Spotify(auth=session['token_info']['access_token'])
         list = sp.current_user_top_tracks(
-            limit=50, offset=0, time_range=time_range)['items']
+            limit=amount_of_items, offset=0, time_range=time_range)['items']
 
         result = []
-        for i in range(50):
+        for i in range(amount_of_items):
             if i == len(list):
                 break
             result.append(str(i+1) + '. ' +
@@ -94,12 +96,13 @@ def top_artists():
             return redirect('/')
 
         time_range = request.args.get('term')
+        amount_of_items = int(request.args.get('amount'))
         sp = spotipy.Spotify(auth=session['token_info']['access_token'])
         list = sp.current_user_top_artists(
-            limit=50, offset=0, time_range=time_range)['items']
+            limit=amount_of_items, offset=0, time_range=time_range)['items']
 
         result = []
-        for i in range(50):
+        for i in range(amount_of_items):
             if i == len(list):
                 break
             result.append(str(i+1) + '. ' + list[i]['name'])
