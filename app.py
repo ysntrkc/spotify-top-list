@@ -54,48 +54,56 @@ def index():
 # This is the page that shows the top tracks of the user.
 @app.route('/top_tracks', methods=['GET', 'POST'])
 def top_tracks():
-    session['token_info'], authorized = get_token()
-    session.modified = True
+    if request.method == 'POST':
+        if request.form.get("back") == "Back":
+            return redirect(url_for('index'))
+    else:
+        session['token_info'], authorized = get_token()
+        session.modified = True
 
-    # We are controlling the user if he is authorized or not.
-    if not authorized:
-        return redirect('/')
+        # We are controlling the user if he is authorized or not.
+        if not authorized:
+            return redirect('/')
 
-    # We are getting the top tracks of the user according to their input.
-    time_range = request.args.get('term')
-    sp = spotipy.Spotify(auth=session['token_info']['access_token'])
-    list = sp.current_user_top_tracks(
-        limit=50, offset=0, time_range=time_range)['items']
+        # We are getting the top tracks of the user according to their input.
+        time_range = request.args.get('term')
+        sp = spotipy.Spotify(auth=session['token_info']['access_token'])
+        list = sp.current_user_top_tracks(
+            limit=50, offset=0, time_range=time_range)['items']
 
-    result = []
-    for i in range(50):
-        if i == len(list):
-            break
-        result.append(str(i+1) + '. ' +
-                      list[i]['name'] + ' - ' + list[i]['artists'][0]['name'])
-    return render_template('/list.html', list=result)
+        result = []
+        for i in range(50):
+            if i == len(list):
+                break
+            result.append(str(i+1) + '. ' +
+                          list[i]['name'] + ' - ' + list[i]['artists'][0]['name'])
+        return render_template('/list.html', list=result)
 
 
 # This is the page that shows the top artists of the user.
 @app.route('/top_artists', methods=['GET', 'POST'])
 def top_artists():
-    session['token_info'], authorized = get_token()
-    session.modified = True
+    if request.method == 'POST':
+        if request.form.get("back") == "Back":
+            return redirect(url_for('index'))
+    else:
+        session['token_info'], authorized = get_token()
+        session.modified = True
 
-    if not authorized:
-        return redirect('/')
+        if not authorized:
+            return redirect('/')
 
-    time_range = request.args.get('term')
-    sp = spotipy.Spotify(auth=session['token_info']['access_token'])
-    list = sp.current_user_top_artists(
-        limit=50, offset=0, time_range=time_range)['items']
+        time_range = request.args.get('term')
+        sp = spotipy.Spotify(auth=session['token_info']['access_token'])
+        list = sp.current_user_top_artists(
+            limit=50, offset=0, time_range=time_range)['items']
 
-    result = []
-    for i in range(50):
-        if i == len(list):
-            break
-        result.append(str(i+1) + '. ' + list[i]['name'])
-    return render_template('/list.html', list=result)
+        result = []
+        for i in range(50):
+            if i == len(list):
+                break
+            result.append(str(i+1) + '. ' + list[i]['name'])
+        return render_template('/list.html', list=result)
 
 
 # This is the function that we use to get the token and validity of that token.
