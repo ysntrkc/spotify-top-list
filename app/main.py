@@ -86,7 +86,7 @@ def top_tracks():
                 + " - "
                 + list[i]["artists"][0]["name"]
             )
-        return render_template("/list.html", list=result)
+        return render_template("/list.html", list=result, type="Top Tracks")
 
 
 # This is the page that shows the top artists of the user.
@@ -114,7 +114,7 @@ def top_artists():
             if i == len(list):
                 break
             result.append(str(i + 1) + ". " + list[i]["name"])
-        return render_template("/list.html", list=result)
+        return render_template("/list.html", list=result, type="Top Artists")
 
 
 # This is the function that we use to get the token and validity of that token.
